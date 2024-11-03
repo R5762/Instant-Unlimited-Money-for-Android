@@ -1,0 +1,36 @@
+{$CLEO .csa}
+
+03A4: script_name "Dinero Instantaneo Ilimitado"
+
+:OBTENER_VERSION_DEL_JUEGO
+0001: wait 0 ms
+00D6: if
+0256:   player $PLAYER_CHAR defined
+004D: jf @OBTENER_VERSION_DEL_JUEGO
+0DD6: 0@ = get_game_version // android
+
+:DIRECCIONES_PARA_VERSION_1_08
+00D6: if
+0039:   0@ == 13
+004D: jf @DIRECCIONES_PARA_VERSION_2_00
+0DD8: 0@ = read_mem_addr 0x8E8708 size 4 add_ib 1 // android
+0DD9: write_mem_addr 0x8E870C value 0@ size 4 add_ib 1 protect 1 // android
+0002: jump @DINERO_INSTANTANEO_ILIMITADO
+
+:DIRECCIONES_PARA_VERSION_2_00
+00D6: if
+0039:   0@ == 17
+004D: jf @DIRECCIONES_PARA_VERSION_1_08
+0DD8: 0@ = read_mem_addr 0x96B754 size 4 add_ib 1 // android
+0DD9: write_mem_addr 0x96B758 value 0@ size 4 add_ib 1 protect 1 // android
+0002: jump @DINERO_INSTANTANEO_ILIMITADO
+
+:DINERO_INSTANTANEO_ILIMITADO
+0001: wait 0 ms
+00D6: if
+810A:   not player $PLAYER_CHAR money > 999999999
+004D: jf @DINERO_INSTANTANEO_ILIMITADO
+010B: 0@ = player $PLAYER_CHAR money
+0006: 0@ = 999999999
+0109: player $PLAYER_CHAR money += 0@
+0002: jump @OBTENER_VERSION_DEL_JUEGO
